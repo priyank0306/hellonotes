@@ -2,19 +2,27 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hellonotes/views/login_view.dart';
+import 'package:hellonotes/views/register_view.dart';
+import 'package:hellonotes/views/verify_email_view.dart';
 
 import 'firebase_options.dart';
 
 void main() {
-  
   runApp(MaterialApp(
-    title: 'Flutter Demo',
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
-    ),
-    home: const HomePage()
-  ));
+      title: 'Flutter Demo',
+      initialRoute: '/',
+      routes: {
+        // When navigating to the "/" route, build the FirstScreen widget.
+        '/login/': (context) => const LoginView(),
+        // When navigating to the "/second" route, build the SecondScreen widget.
+        '/register/': (context) => const RegisterView(),
+      },
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const HomePage()));
 }
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -25,109 +33,29 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("HomePage")),
-        body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {   
-          switch (snapshot.connectionState) {
-            
-            case ConnectionState.done:
-       final user= FirebaseAuth.instance.currentUser;     
-       if(user?.emailVerified??false)
-       {
-        print("you are a verified user");
-       }
-       else
-       {
-        print("you are not a verified user");
-       }
-       print(user);
-             return const Text("Done");
-            default:
-              return const Text("loading ....");
-          }
-        },
-      )
-      );
-    
-  }
-}
-class RegisterView extends StatefulWidget {
-  const RegisterView({super.key});
-
-  @override
-  State<RegisterView> createState() => _RegisterViewState();
-}
-
-class _RegisterViewState extends State<RegisterView> {
-   late final TextEditingController _email;
-  late final TextEditingController _password;
-  @override
-  void initState() {
-    _email = TextEditingController();
-    _password = TextEditingController();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _email.dispose();
-    _password.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Register"),
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
       ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                      controller: _email,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration:
-                          const InputDecoration(hintText: 'Enter your Email')),
-                  TextField(
-                      controller: _password,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                          hintText: 'Enter the password')),
-                  TextButton(
-                      onPressed: (() async {
-                        final email = _email.text;
-                        final password = _password.text;
-                        final userCredentials = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: email, password: password);
-                        print(userCredentials);
-                      }),
-                      child: const Text("Register")),
-                ],
-              );
-            default:
-              return const Text("loading ....");
-          }
-        },
-      ),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              if (user.emailVerified) {
+                print("Verified User");
+              } else {
+                return const VerifyEmailView();
+              }
+            } else {
+              return const LoginView();
+            }
+            return const Text("Done");
+
+          default:
+            return const CircularProgressIndicator();
+        }
+      },
     );
   }
 }
-

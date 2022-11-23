@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
 
   @override
-  State<LoginView> createState() => _HomePageState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _HomePageState extends State<LoginView> {
+class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   @override
@@ -29,7 +29,9 @@ class _HomePageState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login View"),),
+      appBar: AppBar(
+        title: const Text("Register View"),
+      ),
       body: Column(
         children: [
           TextField(
@@ -48,21 +50,17 @@ class _HomePageState extends State<LoginView> {
               onPressed: (() async {
                 final email = _email.text;
                 final password = _password.text;
-                try {
-                  final userCredentials = await FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: email, password: password);
-                  print(userCredentials);
-                } catch (err) {
-                  print("${err.runtimeType} a");
-                }
+                final userCredentials = await FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                        email: email, password: password);
+                print(userCredentials);
               }),
-              child: const Text("Login")),
+              child: const Text("Register")),
           TextButton(
-              onPressed: (() {
-               Navigator.of(context).pushNamedAndRemoveUntil('/register/', (route) => false);
-              }),
-              child: const Text("Go to register view"))
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route) => false);
+              },
+              child: const Text("Go to login view"))
         ],
       ),
     );
