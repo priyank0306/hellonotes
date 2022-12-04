@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:hellonotes/constants/routes.dart';
+import '../utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -11,7 +10,6 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _HomePageState();
 }
 
-
 class _HomePageState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
@@ -19,7 +17,6 @@ class _HomePageState extends State<LoginView> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
-    
 
     super.initState();
   }
@@ -32,7 +29,6 @@ class _HomePageState extends State<LoginView> {
   }
 
   @override
-  
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +36,7 @@ class _HomePageState extends State<LoginView> {
       ),
       body: Column(
         children: [
-          TextField(            
+          TextField(
               controller: _email,
               enableSuggestions: false,
               autocorrect: false,
@@ -62,13 +58,32 @@ class _HomePageState extends State<LoginView> {
                       .signInWithEmailAndPassword(
                           email: email, password: password);
 
-                  // ignore: use_build_context_synchronously
-                  // Navigator.of(context).pushNamedAndRemoveUntil(
-                  //   notesRoute,
-                  //   (route) => false,
-                  // );
-                } catch (err) {
-                  devtools.log(err.toString());
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (route) => false,
+                  );
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'user-not-found') {
+                    await showErrorDialog(
+                      context,
+                      "User not found",
+                    );
+                  } else if (e.code == 'wrong-password') {
+                    await showErrorDialog(
+                      context,
+                      "Wrong Credentials",
+                    );
+                  } else {
+                    await showErrorDialog(
+                      context,
+                      "Error: ${e.code}",
+                    );
+                  }
+                } catch (e) {
+                  await showErrorDialog(
+                    context,
+                    e.toString(),
+                  );
                 }
               }),
               child: const Text("Login")),
