@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log;
+
+import 'package:hellonotes/constants/routes.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -8,6 +11,7 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _HomePageState();
 }
 
+
 class _HomePageState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
@@ -15,6 +19,7 @@ class _HomePageState extends State<LoginView> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    
 
     super.initState();
   }
@@ -27,12 +32,15 @@ class _HomePageState extends State<LoginView> {
   }
 
   @override
+  
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login View"),),
+      appBar: AppBar(
+        title: const Text("Login View"),
+      ),
       body: Column(
         children: [
-          TextField(
+          TextField(            
               controller: _email,
               enableSuggestions: false,
               autocorrect: false,
@@ -43,7 +51,8 @@ class _HomePageState extends State<LoginView> {
               obscureText: true,
               enableSuggestions: false,
               autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Enter the password')),
+              decoration:
+                  const InputDecoration(hintText: 'Enter the password')),
           TextButton(
               onPressed: (() async {
                 final email = _email.text;
@@ -52,15 +61,21 @@ class _HomePageState extends State<LoginView> {
                   final userCredentials = await FirebaseAuth.instance
                       .signInWithEmailAndPassword(
                           email: email, password: password);
-                  print(userCredentials);
+
+                  // ignore: use_build_context_synchronously
+                  // Navigator.of(context).pushNamedAndRemoveUntil(
+                  //   notesRoute,
+                  //   (route) => false,
+                  // );
                 } catch (err) {
-                  print("${err.runtimeType} a");
+                  devtools.log(err.toString());
                 }
               }),
               child: const Text("Login")),
           TextButton(
               onPressed: (() {
-               Navigator.of(context).pushNamedAndRemoveUntil('/register/', (route) => false);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(registerRoute, (route) => false);
               }),
               child: const Text("Go to register view"))
         ],

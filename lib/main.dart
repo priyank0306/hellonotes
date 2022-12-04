@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hellonotes/constants/routes.dart';
 import 'package:hellonotes/views/login_view.dart';
 import 'package:hellonotes/views/register_view.dart';
 import 'package:hellonotes/views/verify_email_view.dart';
@@ -13,9 +14,10 @@ void main() {
       initialRoute: '/',
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
-        '/login/': (context) => const LoginView(),
+        loginRoute: (context) => const LoginView(),
         // When navigating to the "/second" route, build the SecondScreen widget.
-        '/register/': (context) => const RegisterView(),
+        registerRoute: (context) => const RegisterView(),
+        notesRoute:(context) => const NotesView(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -49,7 +51,7 @@ class _NotesViewState extends State<NotesView> {
                     FirebaseAuth.instance.signOut();
 
                     Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login/', (route) => false);
+                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                   }
                   break;
               }
@@ -115,7 +117,7 @@ Future<bool> showLogOutDialog(BuildContext context) async {
               TextButton(
                   onPressed: (() {
                     Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login/', (route) => false);
+                        .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                   }),
                   child: const Text("Log-Out")),
               TextButton(
