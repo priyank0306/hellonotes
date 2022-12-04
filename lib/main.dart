@@ -8,10 +8,12 @@ import 'package:hellonotes/views/verify_email_view.dart';
 import 'dart:developer' as devtools show log;
 import 'firebase_options.dart';
 
-void main() async{
-   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
+
   runApp(MaterialApp(
       title: 'Flutter Demo',
       initialRoute: '/',
@@ -21,6 +23,7 @@ void main() async{
         // When navigating to the "/second" route, build the SecondScreen widget.
         registerRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -39,8 +42,6 @@ class NotesView extends StatefulWidget {
 
 class _NotesViewState extends State<NotesView> {
   @override
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
