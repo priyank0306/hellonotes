@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hellonotes/enums/menu_action.dart';
 import 'package:hellonotes/services/auth/auth_service.dart';
+import 'package:hellonotes/services/auth/firebase_auth_provider.dart';
+import 'package:hellonotes/services/crud/notes_service.dart';
 
 import '../constants/routes.dart';
 
@@ -12,7 +14,20 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+  late final NotesService _notesService;
   @override
+  void initState() {
+    _notesService = NotesService();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,6 +56,18 @@ class _NotesViewState extends State<NotesView> {
             },
           )
         ],
+      ),
+      body: FutureBuilder(
+        future: _notesService.getOrCreateUser(email: userEmail),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return const Text('Hello');
+
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
       ),
     );
   }
