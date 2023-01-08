@@ -4,7 +4,7 @@ import 'package:hellonotes/services/auth/auth_service.dart';
 import 'package:hellonotes/services/auth/firebase_auth_provider.dart';
 import 'package:hellonotes/services/crud/notes_service.dart';
 
-import '../constants/routes.dart';
+import '../../constants/routes.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -34,6 +34,12 @@ class _NotesViewState extends State<NotesView> {
       appBar: AppBar(
         title: const Text("Main UI"),
         actions: [
+          IconButton(
+              onPressed: (() {
+                Navigator.of(context)
+                    .pushNamed(newNoteRoute);
+              }),
+              icon: const Icon(Icons.add)),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value) {
@@ -51,7 +57,7 @@ class _NotesViewState extends State<NotesView> {
             itemBuilder: (context) {
               return [
                 const PopupMenuItem(
-                    value: MenuAction.logout, child: Text("Logout"))
+                    value: MenuAction.logout, child: Text("Logout")),
               ];
             },
           )
@@ -62,7 +68,17 @@ class _NotesViewState extends State<NotesView> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              return const Text('Hello');
+              return StreamBuilder(
+                  stream: _notesService.allNotes,
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        // TODO: Handle this case.
+                        return const Text("hi");
+                      default:
+                        return const Text("hdgdgd");
+                    }
+                  });
 
             default:
               return const CircularProgressIndicator();

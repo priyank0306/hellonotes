@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:hellonotes/services/auth/auth_exceptions.dart';
 import 'package:hellonotes/services/auth/auth_provider.dart';
+import 'package:hellonotes/services/auth/auth_service.dart';
 import 'package:hellonotes/services/auth/auth_user.dart';
 import 'package:test/test.dart';
 
@@ -80,7 +81,7 @@ class MockAuthProvider implements AuthProvider {
   var _isIntialized = false;
   AuthUser? _user;
   bool get isIntialized => _isIntialized;
-
+ String get userEmail=>AuthService.firebase().currentUser!.email!;
   @override
   Future<AuthUser> createUser({
     required String email,
@@ -111,7 +112,7 @@ class MockAuthProvider implements AuthProvider {
     if (isIntialized == false) throw NotInitializedException();
     if (email == 'foo@bar.com') throw UserNotFoundAuthException();
     if (password == 'foobar') throw WrongPasswordAuthException();
-    const user = AuthUser(isEmailVerfied: false);
+    const user = AuthUser(isEmailVerfied: false, email: "priyankmehta6788@gmail.com");
     _user = user;
     return Future.value(user);
   }
@@ -128,7 +129,7 @@ class MockAuthProvider implements AuthProvider {
   Future<void> sendEmailVerification() async {
     if (isIntialized == false) throw NotInitializedException();
     if (_user == null) throw UserNotFoundAuthException();
-    const newUser = AuthUser(isEmailVerfied: true);
+    const newUser = AuthUser(isEmailVerfied: true, email: "priyankmehta6788@gmail.com");
     _user = newUser;
   }
 }

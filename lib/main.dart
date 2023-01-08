@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hellonotes/constants/routes.dart';
 import 'package:hellonotes/views/login_view.dart';
-import 'package:hellonotes/views/notes_view.dart';
+import 'package:hellonotes/views/notes/new_note_view.dart';
+import 'package:hellonotes/views/notes/notes_view.dart';
 import 'package:hellonotes/views/register_view.dart';
 import 'package:hellonotes/views/verify_email_view.dart';
 import 'dart:developer' as devtools show log;
@@ -12,7 +13,7 @@ void main() async {
 // await Firebase.initializeApp(
 //   options: DefaultFirebaseOptions.currentPlatform,
 // );
-AuthService.firebase().initialize();
+  AuthService.firebase().initialize();
 
   runApp(MaterialApp(
       title: 'Flutter Demo',
@@ -24,14 +25,13 @@ AuthService.firebase().initialize();
         registerRoute: (context) => const RegisterView(),
         notesRoute: (context) => const NotesView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
+        newNoteRoute: (context) => const NewNoteView(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: const LoginView()));
 }
-
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -44,11 +44,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future:AuthService.firebase().initialize(),
+      future: AuthService.firebase().initialize(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            final user =AuthService.firebase().currentUser;
+            final user = AuthService.firebase().currentUser;
 
             if (user != null) {
               if (user.isEmailVerfied) {
@@ -68,5 +68,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
