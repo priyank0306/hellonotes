@@ -73,7 +73,7 @@ class _NotesViewState extends State<NotesView> {
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        // TODO: Handle this case.
+                        case ConnectionState.active:
                         return const Text("hi");
                       default:
                         return const Text("hdgdgd");
